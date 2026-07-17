@@ -50,3 +50,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added search bar for chats with filter toggle`
 - Status: Verified educational build step
 
+### Milestone 013 - 2026-07-17 16:30:00
+- Commit: `added filter chips for all unread favorites and groups`
+- Status: Verified educational build step
+
