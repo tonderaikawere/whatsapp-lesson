@@ -58,3 +58,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added chat list component with active item styling`
 - Status: Verified educational build step
 
+### Milestone 015 - 2026-07-22 13:45:00
+- Commit: `added unread message counter badge`
+- Status: Verified educational build step
+
