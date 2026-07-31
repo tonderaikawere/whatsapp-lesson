@@ -86,3 +86,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added end to end encryption security banner`
 - Status: Verified educational build step
 
+### Milestone 022 - 2026-07-31 16:30:00
+- Commit: `added message list component with scroll to bottom`
+- Status: Verified educational build step
+
