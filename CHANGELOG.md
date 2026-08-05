@@ -94,3 +94,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added whatsapp speech bubble styling`
 - Status: Verified educational build step
 
+### Milestone 024 - 2026-08-05 13:45:00
+- Commit: `added message bubble tails geometry`
+- Status: Verified educational build step
+
