@@ -90,3 +90,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added message list component with scroll to bottom`
 - Status: Verified educational build step
 
+### Milestone 023 - 2026-08-05 10:15:00
+- Commit: `added whatsapp speech bubble styling`
+- Status: Verified educational build step
+
