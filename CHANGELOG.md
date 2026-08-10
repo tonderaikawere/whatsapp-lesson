@@ -106,3 +106,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added double blue tick indicator for read messages`
 - Status: Verified educational build step
 
+### Milestone 027 - 2026-08-10 13:45:00
+- Commit: `added chat input component with auto expanding text`
+- Status: Verified educational build step
+
