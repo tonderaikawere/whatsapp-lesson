@@ -118,3 +118,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `made show someone can send messages`
 - Status: Verified educational build step
 
+### Milestone 030 - 2026-08-14 13:45:00
+- Commit: `added dynamic mic and send button toggle`
+- Status: Verified educational build step
+
