@@ -138,3 +138,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added emoji picker popover with common emojis`
 - Status: Verified educational build step
 
+### Milestone 035 - 2026-08-24 10:15:00
+- Commit: `added message reactions with emoji counters`
+- Status: Verified educational build step
+
