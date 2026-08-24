@@ -146,3 +146,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added message context menu with copy and delete`
 - Status: Verified educational build step
 
+### Milestone 037 - 2026-08-24 16:30:00
+- Commit: `added attachment options menu for documents and photos`
+- Status: Verified educational build step
+
