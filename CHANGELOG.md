@@ -150,3 +150,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added attachment options menu for documents and photos`
 - Status: Verified educational build step
 
+### Milestone 038 - 2026-08-28 10:15:00
+- Commit: `added responsive layout for mobile screens`
+- Status: Verified educational build step
+
