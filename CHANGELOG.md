@@ -162,3 +162,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added simulated voice and video call dialog modal`
 - Status: Verified educational build step
 
+### Milestone 041 - 2026-09-02 10:15:00
+- Commit: `added call timer and mute microphone controls`
+- Status: Verified educational build step
+
