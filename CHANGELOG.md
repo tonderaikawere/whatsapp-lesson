@@ -174,3 +174,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added developer profile modal for tonderai kawere`
 - Status: Verified educational build step
 
+### Milestone 044 - 2026-09-07 10:15:00
+- Commit: `added tonderai portfolio link to tonde-portfolio.vercel.app`
+- Status: Verified educational build step
+
