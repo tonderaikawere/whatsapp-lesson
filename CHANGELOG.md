@@ -206,3 +206,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added mozilla public license guide`
 - Status: Verified educational build step
 
+### Milestone 052 - 2026-09-16 16:30:00
+- Commit: `added isc license guide`
+- Status: Verified educational build step
+
