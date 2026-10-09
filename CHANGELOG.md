@@ -266,3 +266,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added quick reaction hover overlay on messages`
 - Status: Verified educational build step
 
+### Milestone 067 - 2026-10-09 16:30:00
+- Commit: `added clear chat history action in menu`
+- Status: Verified educational build step
+
