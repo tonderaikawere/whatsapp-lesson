@@ -294,3 +294,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added keyboard enter to send message`
 - Status: Verified educational build step
 
+### Milestone 074 - 2026-10-23 10:15:00
+- Commit: `added shift enter for multiline text input`
+- Status: Verified educational build step
+
