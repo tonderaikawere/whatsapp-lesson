@@ -338,3 +338,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `optimized turbopack production build settings`
 - Status: Verified educational build step
 
+### Milestone 085 - 2026-11-06 16:30:00
+- Commit: `added cross browser audio synthesis fallbacks`
+- Status: Verified educational build step
+
