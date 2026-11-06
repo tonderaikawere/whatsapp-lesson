@@ -330,3 +330,7 @@ Educational WhatsApp Web UI & AI Chatbot by Tonderai Kawere.
 - Commit: `added contact block and report action buttons`
 - Status: Verified educational build step
 
+### Milestone 083 - 2026-11-06 10:15:00
+- Commit: `added educational milestone tracking in changelog`
+- Status: Verified educational build step
+
