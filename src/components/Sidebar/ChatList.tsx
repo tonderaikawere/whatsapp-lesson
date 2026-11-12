@@ -15,19 +15,21 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 import DoneIcon from '@mui/icons-material/Done';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import { Contact } from '../../types/chat';
+import { Contact, Message } from '../../types/chat';
 import { useColorMode } from '../ThemeRegistry';
 
 interface ChatListProps {
   contacts: Contact[];
   activeContactId: string;
   onSelectContact: (contact: Contact) => void;
+  messagesMap: Record<string, Message[]>;
 }
 
 export default function ChatList({
   contacts,
   activeContactId,
   onSelectContact,
+  messagesMap,
 }: ChatListProps) {
   const { mode } = useColorMode();
 
@@ -43,8 +45,20 @@ export default function ChatList({
     <List disablePadding sx={{ overflowY: 'auto', flex: 1 }}>
       {contacts.map((contact) => {
         const isActive = contact.id === activeContactId;
-        const hasMessage = Boolean(contact.lastMessage && contact.lastMessage.trim() && contact.lastMessage !== 'Messages cleared');
-        const displayPreview = hasMessage ? contact.lastMessage : 'No messages here';
+
+        // Directly derive preview from actual real messages sent/received
+        const contactMsgs = messagesMap[contact.id] || [];
+        const hasRealMessages = contactMsgs.length > 0;
+        const lastMsg = hasRealMessages ? contactMsgs[contactMsgs.length - 1] : null;
+
+        const displayPreview = lastMsg
+          ? lastMsg.attachment
+            ? `📎 ${lastMsg.attachment.type}`
+            : lastMsg.text || 'Attachment'
+          : 'No messages here';
+
+        const displayTime = lastMsg ? lastMsg.timestamp : '';
+        const displayStatus = lastMsg?.isOutgoing ? lastMsg.status : null;
 
         return (
           <ListItemButton
@@ -140,7 +154,7 @@ export default function ChatList({
                       fontWeight: contact.unreadCount && contact.unreadCount > 0 ? 600 : 400,
                     }}
                   >
-                    {hasMessage ? contact.lastMessageTime || '' : ''}
+                    {displayTime}
                   </Typography>
                 </Box>
               }
@@ -154,12 +168,12 @@ export default function ChatList({
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, maxWidth: '80%' }}>
-                    {hasMessage && (
-                      contact.lastMessageStatus === 'read' ? (
+                    {hasRealMessages && displayStatus && (
+                      displayStatus === 'read' ? (
                         <DoneAllIcon sx={{ fontSize: 16, color: '#53bdeb' }} />
-                      ) : contact.lastMessageStatus === 'delivered' ? (
+                      ) : displayStatus === 'delivered' ? (
                         <DoneAllIcon sx={{ fontSize: 16, color: '#8696a0' }} />
-                      ) : contact.lastMessageStatus === 'sent' ? (
+                      ) : displayStatus === 'sent' ? (
                         <DoneIcon sx={{ fontSize: 16, color: '#8696a0' }} />
                       ) : null
                     )}
@@ -167,7 +181,7 @@ export default function ChatList({
                     <Typography
                       variant="body2"
                       sx={{
-                        color: !hasMessage
+                        color: !hasRealMessages
                           ? 'text.disabled'
                           : contact.status?.includes('typing')
                           ? '#25d366'
@@ -175,7 +189,7 @@ export default function ChatList({
                           ? '#667781'
                           : '#8696a0',
                         fontSize: '0.825rem',
-                        fontStyle: !hasMessage ? 'italic' : 'normal',
+                        fontStyle: !hasRealMessages ? 'italic' : 'normal',
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',

@@ -112,9 +112,15 @@ function ChatAppContent() {
 
   // Filter contacts in sidebar
   const filteredContacts = contacts.filter((c) => {
+    const contactMsgs = messagesMap[c.id] || [];
+    const lastMsg = contactMsgs[contactMsgs.length - 1];
+    const lastMsgText = lastMsg
+      ? (lastMsg.attachment ? lastMsg.attachment.name || lastMsg.attachment.type : lastMsg.text)
+      : '';
+
     const matchesSearch =
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.lastMessage && c.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()));
+      lastMsgText.toLowerCase().includes(searchQuery.toLowerCase());
 
     if (!matchesSearch) return false;
 
@@ -475,6 +481,7 @@ function ChatAppContent() {
                 contacts={filteredContacts}
                 activeContactId={activeContactId}
                 onSelectContact={handleSelectContact}
+                messagesMap={messagesMap}
               />
             </>
           )}
