@@ -1,23 +1,46 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
+export const viewport: Viewport = {
+  themeColor: '#008069',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
-  title: 'WhatsApp Web - Educational AI Chatbot | Tonderai Kawere',
+  metadataBase: new URL('https://tonde-portfolio.vercel.app'),
+  title: 'WhatsApp Web',
   description:
-    'Educational WhatsApp Web UI Clone and AI Chatbot built by Tonderai Kawere using Next.js and Material UI. Showcase of modern reactive interfaces and chat systems.',
+    'WhatsApp Web - Fast, secure, and responsive web messenger by Tonderai Kawere (https://tonde-portfolio.vercel.app/).',
+  icons: {
+    icon: '/whatsapp-logo.svg',
+    shortcut: '/whatsapp-logo.svg',
+    apple: '/whatsapp-logo.svg',
+  },
   keywords: [
+    'WhatsApp Web',
     'WhatsApp Web Clone',
     'Tonderai Kawere',
-    'Next.js Chatbot',
-    'Material UI WhatsApp',
-    'Educational Showcase',
     'Full-Stack Developer',
+    'Next.js WhatsApp',
+    'Material UI',
   ],
   authors: [{ name: 'Tonderai Kawere', url: 'https://tonde-portfolio.vercel.app/' }],
   openGraph: {
-    title: 'WhatsApp Web UI Clone - Educational Chatbot',
-    description: 'Developed by Tonderai Kawere (https://tonde-portfolio.vercel.app/)',
+    title: 'WhatsApp Web',
+    description: 'WhatsApp Web application developed by Tonderai Kawere (https://tonde-portfolio.vercel.app/)',
     url: 'https://tonde-portfolio.vercel.app/',
+    siteName: 'WhatsApp Web',
+    images: [
+      {
+        url: '/whatsapp-logo.svg',
+        width: 512,
+        height: 512,
+        alt: 'WhatsApp Logo',
+      },
+    ],
     type: 'website',
   },
 };
@@ -30,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <link rel="icon" type="image/svg+xml" href="/whatsapp-logo.svg" />
       </head>
       <body>{children}</body>
     </html>

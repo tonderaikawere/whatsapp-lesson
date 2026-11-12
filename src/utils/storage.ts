@@ -1,18 +1,33 @@
 import { Contact, Message } from '../types/chat';
 import { initialContacts, initialMessages } from '../data/mockData';
 
-const CONTACTS_KEY = 'wa_web_contacts_v4';
-const MESSAGES_KEY = 'wa_web_messages_v4';
+const CONTACTS_KEY = 'wa_web_contacts_v6';
+const MESSAGES_KEY = 'wa_web_messages_v6';
 
 export const storage = {
   getContacts: (): Contact[] => {
     if (typeof window === 'undefined') return initialContacts;
     try {
-      // Clean up legacy keys if present
-      localStorage.removeItem('wa_web_contacts_v2');
-      localStorage.removeItem('wa_web_contacts_v3');
-      localStorage.removeItem('wa_web_messages_v2');
-      localStorage.removeItem('wa_web_messages_v3');
+      // Actively purge all legacy versions that contained phantom messages or stuck typing states
+      const legacyKeys = [
+        'wa_web_contacts',
+        'wa_web_messages',
+        'wa_web_contacts_v1',
+        'wa_web_contacts_v2',
+        'wa_web_contacts_v3',
+        'wa_web_contacts_v4',
+        'wa_web_contacts_v5',
+        'wa_web_messages_v1',
+        'wa_web_messages_v2',
+        'wa_web_messages_v3',
+        'wa_web_messages_v4',
+        'wa_web_messages_v5',
+      ];
+      legacyKeys.forEach((key) => {
+        try {
+          localStorage.removeItem(key);
+        } catch {}
+      });
 
       const data = localStorage.getItem(CONTACTS_KEY);
       if (data) {
@@ -20,6 +35,7 @@ export const storage = {
         if (Array.isArray(parsed) && parsed.length > 0) {
           return parsed.map((c: Contact) => ({
             ...c,
+            // Never allow stuck typing status
             status: c.status?.toLowerCase().includes('typing') ? 'online' : (c.status || 'online'),
           }));
         }
@@ -70,8 +86,10 @@ export const storage = {
 
   clearAllData: () => {
     if (typeof window === 'undefined') return;
-    localStorage.removeItem(CONTACTS_KEY);
-    localStorage.removeItem(MESSAGES_KEY);
-    localStorage.clear();
+    try {
+      localStorage.removeItem(CONTACTS_KEY);
+      localStorage.removeItem(MESSAGES_KEY);
+      localStorage.clear();
+    } catch {}
   },
 };

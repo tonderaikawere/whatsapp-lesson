@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 import ThemeRegistry, { useColorMode } from '../components/ThemeRegistry';
 import SidebarHeader, { SidebarView } from '../components/Sidebar/SidebarHeader';
+import NotificationBanner from '../components/Sidebar/NotificationBanner';
 import SearchBar from '../components/Sidebar/SearchBar';
 import FilterChips from '../components/Sidebar/FilterChips';
 import ChatList from '../components/Sidebar/ChatList';
@@ -22,6 +23,7 @@ import PollDialog from '../components/Modals/PollDialog';
 import { Contact, Message, FilterType, Attachment } from '../types/chat';
 import { storage } from '../utils/storage';
 import { sounds } from '../utils/sound';
+import { notifications } from '../utils/notifications';
 import { generateBotResponse } from '../utils/botResponses';
 
 type MainView = 'chat' | 'contact-info' | 'story' | 'call';
@@ -31,7 +33,7 @@ function ChatAppContent() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  // Views state (In-place Pages, No Popups!)
+  // Views state (In-place sliding panels/pages, No Popups!)
   const [sidebarView, setSidebarView] = useState<SidebarView>('chat-list');
   const [mainView, setMainView] = useState<MainView>('chat');
   const [activeStoryIndex, setActiveStoryIndex] = useState(0);
@@ -47,22 +49,24 @@ function ChatAppContent() {
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
 
-  // In-Chat Search & Starred filter
+  // In-Chat Search state
   const [showInChatSearch, setShowInChatSearch] = useState(false);
   const [inChatSearchQuery, setInChatSearchQuery] = useState('');
-  const [filterStarred, setFilterStarred] = useState(false);
 
   // Replying state
   const [replyingToMessage, setReplyingToMessage] = useState<Message | null>(null);
 
-  // Typing status
+  // Typing status & safety ref
   const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Mobile navigation state
   const [showMobileChat, setShowMobileChat] = useState(false);
 
-  // Call & Poll State
+  // Call screen state
   const [callIsVideo, setCallIsVideo] = useState(false);
+
+  // Poll Dialog state
   const [pollDialogOpen, setPollDialogOpen] = useState(false);
 
   // Load from device storage on mount
@@ -87,6 +91,25 @@ function ChatAppContent() {
     }
   }, [messagesMap, isLoaded]);
 
+  // Dynamic Browser Tab Title updating with unread messages
+  useEffect(() => {
+    const totalUnread = contacts.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+    if (totalUnread > 0) {
+      document.title = `(${totalUnread}) WhatsApp Web`;
+    } else {
+      document.title = 'WhatsApp Web';
+    }
+  }, [contacts]);
+
+  // Clean up typing timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const activeContact = contacts.find((c) => c.id === activeContactId) || contacts[0] || {
     id: 'ai-assistant',
     name: 'WhatsApp AI Assistant',
@@ -98,9 +121,8 @@ function ChatAppContent() {
 
   const rawMessages = messagesMap[activeContactId] || [];
 
-  // Filter messages in current chat (in-chat search or starred filter)
+  // Filter messages in current chat (in-chat search)
   const activeMessages = rawMessages.filter((m) => {
-    if (filterStarred && !m.isStarred) return false;
     if (showInChatSearch && inChatSearchQuery.trim()) {
       const q = inChatSearchQuery.toLowerCase();
       const matchText = m.text?.toLowerCase().includes(q);
@@ -137,12 +159,17 @@ function ChatAppContent() {
   });
 
   const handleSelectContact = (contact: Contact) => {
+    // If switching chat while someone was typing, clear any stuck indicator
+    setIsTyping(false);
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
     setActiveContactId(contact.id);
     setMainView('chat');
     setShowMobileChat(true);
     setShowInChatSearch(false);
     setInChatSearchQuery('');
-    setFilterStarred(false);
 
     // Mark as read
     if (contact.unreadCount && contact.unreadCount > 0) {
@@ -198,60 +225,65 @@ function ChatAppContent() {
     // Play outgoing sound
     sounds.playSent();
 
-    // Trigger Bot Reply only if chatting with AI Assistant or Tonderai Bot
-    if (activeContactId === 'ai-assistant' || activeContactId === 'tonderai-bot') {
-      setIsTyping(true);
+    // Trigger Bot or simulated response
+    const currentChatId = activeContactId;
+    const isBot = currentChatId === 'ai-assistant' || currentChatId === 'tonderai-bot';
+
+    // Show typing briefly (never stuck)
+    setIsTyping(true);
+    setContacts((prev) =>
+      prev.map((c) => (c.id === currentChatId ? { ...c, status: 'typing...' } : c))
+    );
+
+    const reply = generateBotResponse(currentChatId, text || attachment?.name || '');
+    const delay = isBot ? reply.delayMs || 900 : 1100;
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+
+      const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const botMsg: Message = {
+        id: `reply-${Date.now()}`,
+        senderId: currentChatId,
+        senderName: activeContact.name,
+        text: reply.text,
+        timestamp: botTime,
+        status: 'read',
+        isOutgoing: false,
+      };
+
+      setMessagesMap((prev) => {
+        const updated = (prev[currentChatId] || []).map((m) =>
+          m.isOutgoing ? { ...m, status: 'read' as const } : m
+        );
+        return {
+          ...prev,
+          [currentChatId]: [...updated, botMsg],
+        };
+      });
+
+      // Ensure contact returns to 'online' status immediately!
       setContacts((prev) =>
         prev.map((c) =>
-          c.id === activeContactId ? { ...c, status: 'typing...' } : c
+          c.id === currentChatId
+            ? {
+                ...c,
+                status: 'online',
+                lastMessage: reply.text.slice(0, 50) + (reply.text.length > 50 ? '...' : ''),
+                lastMessageTime: botTime,
+                lastMessageStatus: 'read',
+              }
+            : c
         )
       );
 
-      const reply = generateBotResponse(activeContactId, text || attachment?.name || '');
-      const delay = reply.delayMs || 800;
-
-      setTimeout(() => {
-        setIsTyping(false);
-
-        const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const botMsg: Message = {
-          id: `bot-${Date.now()}`,
-          senderId: activeContactId,
-          senderName: activeContact.name,
-          text: reply.text,
-          timestamp: botTime,
-          status: 'read',
-          isOutgoing: false,
-        };
-
-        setMessagesMap((prev) => {
-          const updated = (prev[activeContactId] || []).map((m) =>
-            m.isOutgoing ? { ...m, status: 'read' as const } : m
-          );
-          return {
-            ...prev,
-            [activeContactId]: [...updated, botMsg],
-          };
-        });
-
-        // Ensure contact returns to 'online' status immediately!
-        setContacts((prev) =>
-          prev.map((c) =>
-            c.id === activeContactId
-              ? {
-                  ...c,
-                  status: 'online',
-                  lastMessage: reply.text.slice(0, 45) + (reply.text.length > 45 ? '...' : ''),
-                  lastMessageTime: botTime,
-                  lastMessageStatus: 'read',
-                }
-              : c
-          )
-        );
-
-        sounds.playReceived();
-      }, delay);
-    }
+      sounds.playReceived();
+      notifications.notify(activeContact.name, reply.text);
+    }, delay);
   };
 
   const handleSendVoiceNote = () => {
@@ -276,35 +308,43 @@ function ChatAppContent() {
 
     sounds.playSent();
 
-    if (activeContactId === 'ai-assistant' || activeContactId === 'tonderai-bot') {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const botMsg: Message = {
-          id: `bot-vn-${Date.now()}`,
-          senderId: activeContactId,
-          senderName: activeContact.name,
-          text: `Voice note received loud and clear! 🎧\n\nTonderai Kawere specializes in clean code across React, Expo, Next.js, and Node.js. Feel free to explore his portfolio at https://tonde-portfolio.vercel.app/!`,
-          timestamp: botTime,
-          status: 'read',
-          isOutgoing: false,
-        };
+    const currentChatId = activeContactId;
+    setIsTyping(true);
+    setContacts((prev) =>
+      prev.map((c) => (c.id === currentChatId ? { ...c, status: 'typing...' } : c))
+    );
 
-        setMessagesMap((prev) => ({
-          ...prev,
-          [activeContactId]: [...(prev[activeContactId] || []), botMsg],
-        }));
-
-        setContacts((prev) =>
-          prev.map((c) =>
-            c.id === activeContactId ? { ...c, status: 'online' } : c
-          )
-        );
-
-        sounds.playReceived();
-      }, 900);
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
     }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const botMsg: Message = {
+        id: `bot-vn-${Date.now()}`,
+        senderId: currentChatId,
+        senderName: activeContact.name,
+        text: `Voice note received loud and clear! 🎧\n\nTonderai Kawere specializes in clean code across React, Expo, Next.js, and Node.js. Feel free to explore his portfolio at https://tonde-portfolio.vercel.app/!`,
+        timestamp: botTime,
+        status: 'read',
+        isOutgoing: false,
+      };
+
+      setMessagesMap((prev) => ({
+        ...prev,
+        [currentChatId]: [...(prev[currentChatId] || []), botMsg],
+      }));
+
+      setContacts((prev) =>
+        prev.map((c) =>
+          c.id === currentChatId ? { ...c, status: 'online' } : c
+        )
+      );
+
+      sounds.playReceived();
+      notifications.notify(activeContact.name, botMsg.text);
+    }, 900);
   };
 
   const handleCreatePoll = (question: string, options: string[]) => {
@@ -366,18 +406,6 @@ function ChatAppContent() {
     });
   };
 
-  const handleToggleStarMessage = (messageId: string) => {
-    setMessagesMap((prev) => {
-      const list = prev[activeContactId] || [];
-      return {
-        ...prev,
-        [activeContactId]: list.map((msg) =>
-          msg.id === messageId ? { ...msg, isStarred: !msg.isStarred } : msg
-        ),
-      };
-    });
-  };
-
   const handleDeleteMessage = (messageId: string) => {
     setMessagesMap((prev) => ({
       ...prev,
@@ -393,7 +421,7 @@ function ChatAppContent() {
     setContacts((prev) =>
       prev.map((c) =>
         c.id === activeContactId
-          ? { ...c, lastMessage: '', lastMessageStatus: undefined }
+          ? { ...c, lastMessage: '', lastMessageTime: '', lastMessageStatus: undefined }
           : c
       )
     );
@@ -441,7 +469,7 @@ function ChatAppContent() {
           position: 'relative',
         }}
       >
-        {/* Left Sidebar (Supports In-Place Pages: Profile, Licenses, Status, Communities, New Chat) */}
+        {/* Left Sidebar (In-Place Pages: Profile, Licenses, Status, Communities, New Chat) */}
         <Box
           sx={{
             width: { xs: '100%', md: 380, lg: 420, xl: 450 },
@@ -464,6 +492,8 @@ function ChatAppContent() {
                 onNavigateSidebar={(view) => setSidebarView(view)}
                 onClearChats={handleResetAllData}
               />
+
+              <NotificationBanner />
 
               <SearchBar
                 searchQuery={searchQuery}
@@ -518,7 +548,7 @@ function ChatAppContent() {
           )}
         </Box>
 
-        {/* Right Chat Area (Supports In-Place Views: Chat, Contact Info, Story Slides, Call Screen) */}
+        {/* Right Chat Area (In-Place Views: Chat, Contact Info, Story Slides, Call Screen) */}
         <Box
           sx={{
             flex: 1,
@@ -552,8 +582,6 @@ function ChatAppContent() {
                   setShowInChatSearch(!showInChatSearch);
                   setInChatSearchQuery('');
                 }}
-                filterStarred={filterStarred}
-                onToggleFilterStarred={() => setFilterStarred(!filterStarred)}
               />
 
               <MessageList
@@ -562,7 +590,6 @@ function ChatAppContent() {
                 onReact={handleReact}
                 onDeleteMessage={handleDeleteMessage}
                 onReplyMessage={(msg) => setReplyingToMessage(msg)}
-                onToggleStarMessage={handleToggleStarMessage}
                 onVotePoll={handleVotePoll}
               />
 

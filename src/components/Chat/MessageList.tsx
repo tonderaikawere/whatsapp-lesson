@@ -23,13 +23,12 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReplyIcon from '@mui/icons-material/Reply';
-import StarIcon from '@mui/icons-material/Star';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
 import DescriptionIcon from '@mui/icons-material/Description';
 import DownloadIcon from '@mui/icons-material/Download';
 import PersonIcon from '@mui/icons-material/Person';
 import { Message } from '../../types/chat';
 import { useColorMode } from '../ThemeRegistry';
+import { formatWhatsAppText } from '../../utils/textFormatter';
 
 interface MessageListProps {
   messages: Message[];
@@ -37,7 +36,6 @@ interface MessageListProps {
   onReact: (messageId: string, emoji: string) => void;
   onDeleteMessage: (messageId: string) => void;
   onReplyMessage: (message: Message) => void;
-  onToggleStarMessage: (messageId: string) => void;
   onVotePoll: (messageId: string, optionId: string) => void;
 }
 
@@ -47,7 +45,6 @@ export default function MessageList({
   onReact,
   onDeleteMessage,
   onReplyMessage,
-  onToggleStarMessage,
   onVotePoll,
 }: MessageListProps) {
   const { mode } = useColorMode();
@@ -427,22 +424,23 @@ export default function MessageList({
                   </Box>
                 </Box>
               ) : (
-                /* Regular Text */
+                /* Regular Text formatted with proper bold, italic, strikethrough, monospace */
                 msg.text && (
                   <Typography
+                    component="div"
                     variant="body2"
                     sx={{
-                      fontSize: '0.9rem',
+                      fontSize: '0.925rem',
                       lineHeight: 1.45,
-                      whiteSpace: 'pre-wrap',
+                      color: 'inherit',
                     }}
                   >
-                    {msg.text}
+                    {formatWhatsAppText(msg.text)}
                   </Typography>
                 )
               )}
 
-              {/* Bottom line: Timestamp, Star, & Ticks */}
+              {/* Bottom line: Timestamp & Ticks */}
               <Box
                 sx={{
                   display: 'flex',
@@ -452,10 +450,6 @@ export default function MessageList({
                   mt: 0.3,
                 }}
               >
-                {msg.isStarred && (
-                  <StarIcon sx={{ fontSize: 13, color: '#f5a623' }} />
-                )}
-
                 <Typography
                   variant="caption"
                   sx={{
@@ -661,7 +655,7 @@ export default function MessageList({
         </Box>
       </Menu>
 
-      {/* Message Context Menu */}
+      {/* Message Context Menu (Clean, No stars) */}
       <Menu
         anchorEl={menuAnchorEl}
         open={Boolean(menuAnchorEl)}
@@ -671,7 +665,7 @@ export default function MessageList({
             sx: {
               bgcolor: mode === 'light' ? '#ffffff' : '#233138',
               color: mode === 'light' ? '#3b4a54' : '#d1d7db',
-              minWidth: 160,
+              minWidth: 150,
             },
           },
         }}
@@ -686,27 +680,6 @@ export default function MessageList({
         >
           <ReplyIcon fontSize="small" sx={{ mr: 1 }} />
           Reply
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            if (activeMenuMsg) {
-              onToggleStarMessage(activeMenuMsg.id);
-            }
-            setMenuAnchorEl(null);
-          }}
-        >
-          {activeMenuMsg?.isStarred ? (
-            <>
-              <StarBorderIcon fontSize="small" sx={{ mr: 1 }} />
-              Unstar
-            </>
-          ) : (
-            <>
-              <StarIcon fontSize="small" sx={{ mr: 1, color: '#f5a623' }} />
-              Star
-            </>
-          )}
         </MenuItem>
 
         <MenuItem

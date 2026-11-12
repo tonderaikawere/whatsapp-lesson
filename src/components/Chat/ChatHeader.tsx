@@ -24,7 +24,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import LaunchIcon from '@mui/icons-material/Launch';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import StarIcon from '@mui/icons-material/Star';
 import { Contact } from '../../types/chat';
 import { useColorMode } from '../ThemeRegistry';
 
@@ -38,8 +37,6 @@ interface ChatHeaderProps {
   onInChatSearchChange: (query: string) => void;
   showInChatSearch: boolean;
   onToggleInChatSearch: () => void;
-  filterStarred: boolean;
-  onToggleFilterStarred: () => void;
 }
 
 export default function ChatHeader({
@@ -52,8 +49,6 @@ export default function ChatHeader({
   onInChatSearchChange,
   showInChatSearch,
   onToggleInChatSearch,
-  filterStarred,
-  onToggleFilterStarred,
 }: ChatHeaderProps) {
   const { mode } = useColorMode();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -242,18 +237,6 @@ export default function ChatHeader({
                   <InfoOutlinedIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText primary="Contact Info" />
-              </MenuItem>
-
-              <MenuItem
-                onClick={() => {
-                  setAnchorEl(null);
-                  onToggleFilterStarred();
-                }}
-              >
-                <ListItemIcon sx={{ color: filterStarred ? '#f5a623' : 'inherit' }}>
-                  <StarIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText primary={filterStarred ? 'Show All Messages' : 'Starred Messages'} />
               </MenuItem>
 
               <MenuItem
