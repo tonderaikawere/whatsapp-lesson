@@ -22,22 +22,16 @@ import PolicyIcon from '@mui/icons-material/Policy';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import { useColorMode } from '../ThemeRegistry';
 
+export type SidebarView = 'chat-list' | 'profile' | 'status' | 'communities' | 'new-chat' | 'licenses';
+
 interface SidebarHeaderProps {
-  onOpenProfile: () => void;
-  onOpenLicenses: () => void;
+  onNavigateSidebar: (view: SidebarView) => void;
   onClearChats: () => void;
-  onOpenStatus: () => void;
-  onOpenCommunities: () => void;
-  onOpenNewChat: () => void;
 }
 
 export default function SidebarHeader({
-  onOpenProfile,
-  onOpenLicenses,
+  onNavigateSidebar,
   onClearChats,
-  onOpenStatus,
-  onOpenCommunities,
-  onOpenNewChat,
 }: SidebarHeaderProps) {
   const { mode, toggleColorMode } = useColorMode();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -64,8 +58,8 @@ export default function SidebarHeader({
         flexShrink: 0,
       }}
     >
-      <Tooltip title="View Developer Profile (Tonderai Kawere)">
-        <IconButton onClick={onOpenProfile} sx={{ p: 0 }}>
+      <Tooltip title="View Profile (Tonderai Kawere)">
+        <IconButton onClick={() => onNavigateSidebar('profile')} sx={{ p: 0 }}>
           <Avatar
             sx={{
               width: 40,
@@ -84,19 +78,19 @@ export default function SidebarHeader({
 
       <Box sx={{ display: 'flex', gap: 0.5, color: mode === 'light' ? '#54656f' : '#aebac1' }}>
         <Tooltip title="Communities">
-          <IconButton size="small" onClick={onOpenCommunities} sx={{ color: 'inherit' }}>
+          <IconButton size="small" onClick={() => onNavigateSidebar('communities')} sx={{ color: 'inherit' }}>
             <GroupsIcon fontSize="small" />
           </IconButton>
         </Tooltip>
 
         <Tooltip title="Status (Stories)">
-          <IconButton size="small" onClick={onOpenStatus} sx={{ color: 'inherit' }}>
+          <IconButton size="small" onClick={() => onNavigateSidebar('status')} sx={{ color: 'inherit' }}>
             <DonutLargeIcon fontSize="small" />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="New Chat / Contact">
-          <IconButton size="small" onClick={onOpenNewChat} sx={{ color: 'inherit' }}>
+        <Tooltip title="New Chat">
+          <IconButton size="small" onClick={() => onNavigateSidebar('new-chat')} sx={{ color: 'inherit' }}>
             <ChatIcon fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -124,7 +118,7 @@ export default function SidebarHeader({
                 bgcolor: mode === 'light' ? '#ffffff' : '#233138',
                 color: mode === 'light' ? '#3b4a54' : '#d1d7db',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                minWidth: 200,
+                minWidth: 210,
               },
             },
           }}
@@ -132,7 +126,7 @@ export default function SidebarHeader({
           <MenuItem
             onClick={() => {
               handleMenuClose();
-              onOpenProfile();
+              onNavigateSidebar('profile');
             }}
           >
             <ListItemIcon sx={{ color: 'inherit' }}>
@@ -144,7 +138,7 @@ export default function SidebarHeader({
           <MenuItem
             onClick={() => {
               handleMenuClose();
-              onOpenLicenses();
+              onNavigateSidebar('licenses');
             }}
           >
             <ListItemIcon sx={{ color: 'inherit' }}>

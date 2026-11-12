@@ -136,6 +136,41 @@ export default function MessageList({
         </Box>
       </Box>
 
+      {/* Empty State: No messages here */}
+      {messages.length === 0 && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            my: 'auto',
+            py: 6,
+            textAlign: 'center',
+            color: 'text.secondary',
+          }}
+        >
+          <Box
+            sx={{
+              bgcolor: mode === 'light' ? '#ffffff' : '#202c33',
+              p: 3,
+              borderRadius: 3,
+              maxWidth: 360,
+              boxShadow: '0 1px 2px rgba(11,20,26,0.12)',
+              border: '1px solid',
+              borderColor: 'divider',
+            }}
+          >
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: mode === 'light' ? '#111b21' : '#e9edef', mb: 0.5 }}>
+              No messages here
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.85rem', lineHeight: 1.4 }}>
+              Send a message or select an attachment below to start chatting!
+            </Typography>
+          </Box>
+        </Box>
+      )}
+
       {/* Messages */}
       {messages.map((msg) => {
         const isOut = msg.isOutgoing;

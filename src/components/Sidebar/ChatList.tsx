@@ -43,6 +43,8 @@ export default function ChatList({
     <List disablePadding sx={{ overflowY: 'auto', flex: 1 }}>
       {contacts.map((contact) => {
         const isActive = contact.id === activeContactId;
+        const hasMessage = Boolean(contact.lastMessage && contact.lastMessage.trim() && contact.lastMessage !== 'Messages cleared');
+        const displayPreview = hasMessage ? contact.lastMessage : 'No messages here';
 
         return (
           <ListItemButton
@@ -78,13 +80,13 @@ export default function ChatList({
                 sx={{
                   '& .MuiBadge-badge': {
                     backgroundColor:
-                      contact.status === 'online' || contact.status.includes('typing')
+                      contact.status === 'online' || contact.status?.includes('typing')
                         ? '#25d366'
                         : 'transparent',
                     border: '2px solid',
                     borderColor: mode === 'light' ? '#ffffff' : '#111b21',
                     display:
-                      contact.status === 'online' || contact.status.includes('typing')
+                      contact.status === 'online' || contact.status?.includes('typing')
                         ? 'block'
                         : 'none',
                   },
@@ -138,7 +140,7 @@ export default function ChatList({
                       fontWeight: contact.unreadCount && contact.unreadCount > 0 ? 600 : 400,
                     }}
                   >
-                    {contact.lastMessageTime || ''}
+                    {hasMessage ? contact.lastMessageTime || '' : ''}
                   </Typography>
                 </Box>
               }
@@ -152,30 +154,35 @@ export default function ChatList({
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, maxWidth: '80%' }}>
-                    {contact.lastMessageStatus === 'read' ? (
-                      <DoneAllIcon sx={{ fontSize: 16, color: '#53bdeb' }} />
-                    ) : contact.lastMessageStatus === 'delivered' ? (
-                      <DoneAllIcon sx={{ fontSize: 16, color: '#8696a0' }} />
-                    ) : contact.lastMessageStatus === 'sent' ? (
-                      <DoneIcon sx={{ fontSize: 16, color: '#8696a0' }} />
-                    ) : null}
+                    {hasMessage && (
+                      contact.lastMessageStatus === 'read' ? (
+                        <DoneAllIcon sx={{ fontSize: 16, color: '#53bdeb' }} />
+                      ) : contact.lastMessageStatus === 'delivered' ? (
+                        <DoneAllIcon sx={{ fontSize: 16, color: '#8696a0' }} />
+                      ) : contact.lastMessageStatus === 'sent' ? (
+                        <DoneIcon sx={{ fontSize: 16, color: '#8696a0' }} />
+                      ) : null
+                    )}
 
                     <Typography
                       variant="body2"
                       sx={{
-                        color: contact.status.includes('typing')
+                        color: !hasMessage
+                          ? 'text.disabled'
+                          : contact.status?.includes('typing')
                           ? '#25d366'
                           : mode === 'light'
                           ? '#667781'
                           : '#8696a0',
                         fontSize: '0.825rem',
+                        fontStyle: !hasMessage ? 'italic' : 'normal',
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
-                        fontWeight: contact.status.includes('typing') ? 600 : 400,
+                        fontWeight: contact.status?.includes('typing') ? 600 : 400,
                       }}
                     >
-                      {contact.status.includes('typing') ? 'typing...' : contact.lastMessage}
+                      {contact.status?.includes('typing') ? 'typing...' : displayPreview}
                     </Typography>
                   </Box>
 

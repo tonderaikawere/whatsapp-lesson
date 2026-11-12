@@ -3,32 +3,40 @@
 import React, { useState, useEffect } from 'react';
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 import ThemeRegistry, { useColorMode } from '../components/ThemeRegistry';
-import SidebarHeader from '../components/Sidebar/SidebarHeader';
+import SidebarHeader, { SidebarView } from '../components/Sidebar/SidebarHeader';
 import SearchBar from '../components/Sidebar/SearchBar';
 import FilterChips from '../components/Sidebar/FilterChips';
 import ChatList from '../components/Sidebar/ChatList';
 import ChatHeader from '../components/Chat/ChatHeader';
 import MessageList from '../components/Chat/MessageList';
 import ChatInput from '../components/Chat/ChatInput';
-import DeveloperModal from '../components/Modals/DeveloperModal';
-import LicensesModal from '../components/Modals/LicensesModal';
-import CallDialog from '../components/Modals/CallDialog';
-import ContactInfoDrawer from '../components/Modals/ContactInfoDrawer';
+import ProfilePage from '../components/Pages/ProfilePage';
+import LicensesPage from '../components/Pages/LicensesPage';
+import StatusPage from '../components/Pages/StatusPage';
+import NewChatPage from '../components/Pages/NewChatPage';
+import CommunitiesPage from '../components/Pages/CommunitiesPage';
+import ContactInfoPage from '../components/Pages/ContactInfoPage';
+import StorySlideView from '../components/Pages/StorySlideView';
+import CallScreenView from '../components/Pages/CallScreenView';
 import PollDialog from '../components/Modals/PollDialog';
-import StatusViewerModal from '../components/Modals/StatusViewerModal';
-import NewChatModal from '../components/Modals/NewChatModal';
-import CommunitiesDrawer from '../components/Modals/CommunitiesDrawer';
 import { Contact, Message, FilterType, Attachment } from '../types/chat';
 import { storage } from '../utils/storage';
 import { sounds } from '../utils/sound';
 import { generateBotResponse } from '../utils/botResponses';
+
+type MainView = 'chat' | 'contact-info' | 'story' | 'call';
 
 function ChatAppContent() {
   const { mode } = useColorMode();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  // State initialized from local device storage
+  // Views state (In-place Pages, No Popups!)
+  const [sidebarView, setSidebarView] = useState<SidebarView>('chat-list');
+  const [mainView, setMainView] = useState<MainView>('chat');
+  const [activeStoryIndex, setActiveStoryIndex] = useState(0);
+
+  // Contacts and messages state
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [activeContactId, setActiveContactId] = useState<string>('ai-assistant');
   const [messagesMap, setMessagesMap] = useState<Record<string, Message[]>>({});
@@ -53,16 +61,9 @@ function ChatAppContent() {
   // Mobile navigation state
   const [showMobileChat, setShowMobileChat] = useState(false);
 
-  // Modals state
-  const [developerModalOpen, setDeveloperModalOpen] = useState(false);
-  const [licensesModalOpen, setLicensesModalOpen] = useState(false);
-  const [callModalOpen, setCallModalOpen] = useState(false);
+  // Call & Poll State
   const [callIsVideo, setCallIsVideo] = useState(false);
-  const [contactInfoDrawerOpen, setContactInfoDrawerOpen] = useState(false);
   const [pollDialogOpen, setPollDialogOpen] = useState(false);
-  const [statusModalOpen, setStatusModalOpen] = useState(false);
-  const [newChatModalOpen, setNewChatModalOpen] = useState(false);
-  const [communitiesDrawerOpen, setCommunitiesDrawerOpen] = useState(false);
 
   // Load from device storage on mount
   useEffect(() => {
@@ -131,6 +132,7 @@ function ChatAppContent() {
 
   const handleSelectContact = (contact: Contact) => {
     setActiveContactId(contact.id);
+    setMainView('chat');
     setShowMobileChat(true);
     setShowInChatSearch(false);
     setInChatSearchQuery('');
@@ -385,7 +387,7 @@ function ChatAppContent() {
     setContacts((prev) =>
       prev.map((c) =>
         c.id === activeContactId
-          ? { ...c, lastMessage: 'Messages cleared', lastMessageStatus: undefined }
+          ? { ...c, lastMessage: '', lastMessageStatus: undefined }
           : c
       )
     );
@@ -399,6 +401,8 @@ function ChatAppContent() {
   const handleAddNewContact = (newContact: Contact) => {
     setContacts((prev) => [newContact, ...prev]);
     setActiveContactId(newContact.id);
+    setSidebarView('chat-list');
+    setMainView('chat');
     setShowMobileChat(true);
   };
 
@@ -431,7 +435,7 @@ function ChatAppContent() {
           position: 'relative',
         }}
       >
-        {/* Left Sidebar */}
+        {/* Left Sidebar (Supports In-Place Pages: Profile, Licenses, Status, Communities, New Chat) */}
         <Box
           sx={{
             width: { xs: '100%', md: 380, lg: 420, xl: 450 },
@@ -445,37 +449,69 @@ function ChatAppContent() {
             height: '100%',
             flexShrink: 0,
             bgcolor: mode === 'light' ? '#ffffff' : '#111b21',
+            overflow: 'hidden',
           }}
         >
-          <SidebarHeader
-            onOpenProfile={() => setDeveloperModalOpen(true)}
-            onOpenLicenses={() => setLicensesModalOpen(true)}
-            onClearChats={handleResetAllData}
-            onOpenStatus={() => setStatusModalOpen(true)}
-            onOpenCommunities={() => setCommunitiesDrawerOpen(true)}
-            onOpenNewChat={() => setNewChatModalOpen(true)}
-          />
+          {sidebarView === 'chat-list' && (
+            <>
+              <SidebarHeader
+                onNavigateSidebar={(view) => setSidebarView(view)}
+                onClearChats={handleResetAllData}
+              />
 
-          <SearchBar
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            showUnreadOnly={showUnreadOnly}
-            onToggleUnreadOnly={() => setShowUnreadOnly(!showUnreadOnly)}
-          />
+              <SearchBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                showUnreadOnly={showUnreadOnly}
+                onToggleUnreadOnly={() => setShowUnreadOnly(!showUnreadOnly)}
+              />
 
-          <FilterChips
-            currentFilter={filterType}
-            onSelectFilter={setFilterType}
-          />
+              <FilterChips
+                currentFilter={filterType}
+                onSelectFilter={setFilterType}
+              />
 
-          <ChatList
-            contacts={filteredContacts}
-            activeContactId={activeContactId}
-            onSelectContact={handleSelectContact}
-          />
+              <ChatList
+                contacts={filteredContacts}
+                activeContactId={activeContactId}
+                onSelectContact={handleSelectContact}
+              />
+            </>
+          )}
+
+          {sidebarView === 'profile' && (
+            <ProfilePage onBack={() => setSidebarView('chat-list')} />
+          )}
+
+          {sidebarView === 'licenses' && (
+            <LicensesPage onBack={() => setSidebarView('chat-list')} />
+          )}
+
+          {sidebarView === 'status' && (
+            <StatusPage
+              onBack={() => setSidebarView('chat-list')}
+              onOpenStorySlide={(idx) => {
+                setActiveStoryIndex(idx);
+                setMainView('story');
+              }}
+            />
+          )}
+
+          {sidebarView === 'communities' && (
+            <CommunitiesPage onBack={() => setSidebarView('chat-list')} />
+          )}
+
+          {sidebarView === 'new-chat' && (
+            <NewChatPage
+              onBack={() => setSidebarView('chat-list')}
+              contacts={contacts}
+              onSelectContact={handleSelectContact}
+              onAddNewContact={handleAddNewContact}
+            />
+          )}
         </Box>
 
-        {/* Right Chat Area */}
+        {/* Right Chat Area (Supports In-Place Views: Chat, Contact Info, Story Slides, Call Screen) */}
         <Box
           sx={{
             flex: 1,
@@ -491,90 +527,77 @@ function ChatAppContent() {
             bgcolor: mode === 'light' ? '#efeae2' : '#0b141a',
           }}
         >
-          <ChatHeader
-            contact={activeContact}
-            onBackMobile={() => setShowMobileChat(false)}
-            onOpenCall={(isVideo) => {
-              setCallIsVideo(isVideo);
-              setCallModalOpen(true);
-            }}
-            onOpenInfo={() => setContactInfoDrawerOpen(true)}
-            onClearChatHistory={handleClearChatHistory}
-            inChatSearchQuery={inChatSearchQuery}
-            onInChatSearchChange={setInChatSearchQuery}
-            showInChatSearch={showInChatSearch}
-            onToggleInChatSearch={() => {
-              setShowInChatSearch(!showInChatSearch);
-              setInChatSearchQuery('');
-            }}
-            filterStarred={filterStarred}
-            onToggleFilterStarred={() => setFilterStarred(!filterStarred)}
-          />
+          {mainView === 'chat' && (
+            <>
+              <ChatHeader
+                contact={activeContact}
+                onBackMobile={() => setShowMobileChat(false)}
+                onOpenCall={(isVideo) => {
+                  setCallIsVideo(isVideo);
+                  setMainView('call');
+                }}
+                onOpenInfo={() => setMainView('contact-info')}
+                onClearChatHistory={handleClearChatHistory}
+                inChatSearchQuery={inChatSearchQuery}
+                onInChatSearchChange={setInChatSearchQuery}
+                showInChatSearch={showInChatSearch}
+                onToggleInChatSearch={() => {
+                  setShowInChatSearch(!showInChatSearch);
+                  setInChatSearchQuery('');
+                }}
+                filterStarred={filterStarred}
+                onToggleFilterStarred={() => setFilterStarred(!filterStarred)}
+              />
 
-          <MessageList
-            messages={activeMessages}
-            isTyping={isTyping}
-            onReact={handleReact}
-            onDeleteMessage={handleDeleteMessage}
-            onReplyMessage={(msg) => setReplyingToMessage(msg)}
-            onToggleStarMessage={handleToggleStarMessage}
-            onVotePoll={handleVotePoll}
-          />
+              <MessageList
+                messages={activeMessages}
+                isTyping={isTyping}
+                onReact={handleReact}
+                onDeleteMessage={handleDeleteMessage}
+                onReplyMessage={(msg) => setReplyingToMessage(msg)}
+                onToggleStarMessage={handleToggleStarMessage}
+                onVotePoll={handleVotePoll}
+              />
 
-          <ChatInput
-            onSendMessage={handleSendMessage}
-            onSendVoiceNote={handleSendVoiceNote}
-            replyingToMessage={replyingToMessage}
-            onCancelReply={() => setReplyingToMessage(null)}
-            onOpenPollDialog={() => setPollDialogOpen(true)}
-          />
+              <ChatInput
+                onSendMessage={handleSendMessage}
+                onSendVoiceNote={handleSendVoiceNote}
+                replyingToMessage={replyingToMessage}
+                onCancelReply={() => setReplyingToMessage(null)}
+                onOpenPollDialog={() => setPollDialogOpen(true)}
+              />
+            </>
+          )}
+
+          {mainView === 'contact-info' && (
+            <ContactInfoPage
+              contact={activeContact}
+              onBack={() => setMainView('chat')}
+            />
+          )}
+
+          {mainView === 'story' && (
+            <StorySlideView
+              initialIndex={activeStoryIndex}
+              onClose={() => setMainView('chat')}
+            />
+          )}
+
+          {mainView === 'call' && (
+            <CallScreenView
+              contact={activeContact}
+              isVideo={callIsVideo}
+              onEndCall={() => setMainView('chat')}
+            />
+          )}
         </Box>
       </Box>
 
-      {/* Modals & Drawers */}
-      <DeveloperModal
-        open={developerModalOpen}
-        onClose={() => setDeveloperModalOpen(false)}
-      />
-
-      <LicensesModal
-        open={licensesModalOpen}
-        onClose={() => setLicensesModalOpen(false)}
-      />
-
-      <CallDialog
-        open={callModalOpen}
-        isVideo={callIsVideo}
-        contact={activeContact}
-        onClose={() => setCallModalOpen(false)}
-      />
-
-      <ContactInfoDrawer
-        open={contactInfoDrawerOpen}
-        contact={activeContact}
-        onClose={() => setContactInfoDrawerOpen(false)}
-      />
-
+      {/* Attachment In-Place Poll Dialog */}
       <PollDialog
         open={pollDialogOpen}
         onClose={() => setPollDialogOpen(false)}
         onCreatePoll={handleCreatePoll}
-      />
-
-      <StatusViewerModal
-        open={statusModalOpen}
-        onClose={() => setStatusModalOpen(false)}
-      />
-
-      <NewChatModal
-        open={newChatModalOpen}
-        onClose={() => setNewChatModalOpen(false)}
-        onAddNewContact={handleAddNewContact}
-      />
-
-      <CommunitiesDrawer
-        open={communitiesDrawerOpen}
-        onClose={() => setCommunitiesDrawerOpen(false)}
       />
     </Box>
   );
