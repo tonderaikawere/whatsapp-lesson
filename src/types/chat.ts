@@ -1,9 +1,10 @@
 export type MessageStatus = 'pending' | 'sent' | 'delivered' | 'read';
 
-export interface Reaction {
-  emoji: string;
-  count: number;
-  users: string[];
+export interface PollOption {
+  id: string;
+  text: string;
+  votes: number;
+  voters: string[];
 }
 
 export interface Attachment {
@@ -11,6 +12,17 @@ export interface Attachment {
   url?: string;
   name?: string;
   size?: string;
+  mimeType?: string;
+  contactData?: {
+    name: string;
+    phone: string;
+    avatar?: string;
+  };
+  pollData?: {
+    question: string;
+    options: PollOption[];
+    multipleAnswers?: boolean;
+  };
 }
 
 export interface Message {
@@ -30,6 +42,7 @@ export interface Message {
   isVoiceNote?: boolean;
   voiceDuration?: string;
   reactions?: Record<string, number>;
+  isStarred?: boolean;
 }
 
 export interface Contact {
@@ -38,7 +51,7 @@ export interface Contact {
   avatar: string;
   phone: string;
   about: string;
-  status: 'online' | 'offline' | 'typing...' | string;
+  status: string; // 'online' | 'offline' | 'last seen...'
   lastSeen?: string;
   isPinned?: boolean;
   isGroup?: boolean;

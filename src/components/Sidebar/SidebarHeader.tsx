@@ -26,12 +26,18 @@ interface SidebarHeaderProps {
   onOpenProfile: () => void;
   onOpenLicenses: () => void;
   onClearChats: () => void;
+  onOpenStatus: () => void;
+  onOpenCommunities: () => void;
+  onOpenNewChat: () => void;
 }
 
 export default function SidebarHeader({
   onOpenProfile,
   onOpenLicenses,
   onClearChats,
+  onOpenStatus,
+  onOpenCommunities,
+  onOpenNewChat,
 }: SidebarHeaderProps) {
   const { mode, toggleColorMode } = useColorMode();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -55,6 +61,7 @@ export default function SidebarHeader({
         px: 2,
         borderBottom: 1,
         borderColor: 'divider',
+        flexShrink: 0,
       }}
     >
       <Tooltip title="View Developer Profile (Tonderai Kawere)">
@@ -77,19 +84,19 @@ export default function SidebarHeader({
 
       <Box sx={{ display: 'flex', gap: 0.5, color: mode === 'light' ? '#54656f' : '#aebac1' }}>
         <Tooltip title="Communities">
-          <IconButton size="small" sx={{ color: 'inherit' }}>
+          <IconButton size="small" onClick={onOpenCommunities} sx={{ color: 'inherit' }}>
             <GroupsIcon fontSize="small" />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Status">
-          <IconButton size="small" sx={{ color: 'inherit' }}>
+        <Tooltip title="Status (Stories)">
+          <IconButton size="small" onClick={onOpenStatus} sx={{ color: 'inherit' }}>
             <DonutLargeIcon fontSize="small" />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="New Chat">
-          <IconButton size="small" sx={{ color: 'inherit' }}>
+        <Tooltip title="New Chat / Contact">
+          <IconButton size="small" onClick={onOpenNewChat} sx={{ color: 'inherit' }}>
             <ChatIcon fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -110,15 +117,17 @@ export default function SidebarHeader({
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
-          slotProps={{ paper: {
-            sx: {
-              mt: 1,
-              bgcolor: mode === 'light' ? '#ffffff' : '#233138',
-              color: mode === 'light' ? '#3b4a54' : '#d1d7db',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              minWidth: 200,
+          slotProps={{
+            paper: {
+              sx: {
+                mt: 1,
+                bgcolor: mode === 'light' ? '#ffffff' : '#233138',
+                color: mode === 'light' ? '#3b4a54' : '#d1d7db',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                minWidth: 200,
+              },
             },
-          }}}
+          }}
         >
           <MenuItem
             onClick={() => {
@@ -153,7 +162,7 @@ export default function SidebarHeader({
             <ListItemIcon sx={{ color: 'inherit' }}>
               <DeleteSweepIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary="Reset Messages" />
+            <ListItemText primary="Reset All Data" />
           </MenuItem>
         </Menu>
       </Box>
