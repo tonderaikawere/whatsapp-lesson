@@ -1,14 +1,14 @@
 import { Contact, Message } from '../types/chat';
 import { initialContacts, initialMessages } from '../data/mockData';
 
-const CONTACTS_KEY = 'wa_web_contacts_v6';
-const MESSAGES_KEY = 'wa_web_messages_v6';
+const CONTACTS_KEY = 'wa_web_contacts_v7';
+const MESSAGES_KEY = 'wa_web_messages_v7';
 
 export const storage = {
   getContacts: (): Contact[] => {
     if (typeof window === 'undefined') return initialContacts;
     try {
-      // Actively purge all legacy versions that contained phantom messages or stuck typing states
+      // Actively purge all legacy versions
       const legacyKeys = [
         'wa_web_contacts',
         'wa_web_messages',
@@ -17,11 +17,13 @@ export const storage = {
         'wa_web_contacts_v3',
         'wa_web_contacts_v4',
         'wa_web_contacts_v5',
+        'wa_web_contacts_v6',
         'wa_web_messages_v1',
         'wa_web_messages_v2',
         'wa_web_messages_v3',
         'wa_web_messages_v4',
         'wa_web_messages_v5',
+        'wa_web_messages_v6',
       ];
       legacyKeys.forEach((key) => {
         try {
