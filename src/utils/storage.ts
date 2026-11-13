@@ -1,8 +1,8 @@
 import { Contact, Message } from '../types/chat';
 import { initialContacts, initialMessages } from '../data/mockData';
 
-const CONTACTS_KEY = 'wa_web_contacts_v8';
-const MESSAGES_KEY = 'wa_web_messages_v8';
+const CONTACTS_KEY = 'wa_web_contacts_v9';
+const MESSAGES_KEY = 'wa_web_messages_v9';
 
 export const storage = {
   getContacts: (): Contact[] => {
@@ -19,6 +19,7 @@ export const storage = {
         'wa_web_contacts_v5',
         'wa_web_contacts_v6',
         'wa_web_contacts_v7',
+        'wa_web_contacts_v8',
         'wa_web_messages_v1',
         'wa_web_messages_v2',
         'wa_web_messages_v3',
@@ -26,6 +27,7 @@ export const storage = {
         'wa_web_messages_v5',
         'wa_web_messages_v6',
         'wa_web_messages_v7',
+        'wa_web_messages_v8',
       ];
       legacyKeys.forEach((key) => {
         try {

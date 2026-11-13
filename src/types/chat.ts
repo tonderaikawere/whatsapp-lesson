@@ -60,6 +60,7 @@ export interface Contact {
   lastMessage?: string;
   lastMessageTime?: string;
   lastMessageStatus?: MessageStatus;
+  lastMessageTimestamp?: number;
   groupMembers?: string[];
 }
 

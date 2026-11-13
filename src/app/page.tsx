@@ -158,6 +158,16 @@ function ChatAppContent() {
     return true;
   });
 
+  // Sort contacts just like WhatsApp: Pinned chats on top, and sorted by most recent message
+  const sortedContacts = [...filteredContacts].sort((a, b) => {
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+
+    const timeA = a.lastMessageTimestamp || 0;
+    const timeB = b.lastMessageTimestamp || 0;
+    return timeB - timeA;
+  });
+
   const handleSelectContact = (contact: Contact) => {
     // If switching chat while someone was typing, clear any stuck indicator
     setIsTyping(false);
@@ -208,7 +218,7 @@ function ChatAppContent() {
       [activeContactId]: [...(prev[activeContactId] || []), newMsg],
     }));
 
-    // Update contacts list last message
+    // Update contacts list last message & timestamp
     setContacts((prev) =>
       prev.map((c) =>
         c.id === activeContactId
@@ -217,6 +227,7 @@ function ChatAppContent() {
               lastMessage: attachment ? `📎 ${attachment.type}` : text,
               lastMessageTime: timeStr,
               lastMessageStatus: 'delivered',
+              lastMessageTimestamp: Date.now(),
             }
           : c
       )
@@ -275,6 +286,7 @@ function ChatAppContent() {
                 lastMessage: reply.text.slice(0, 50) + (reply.text.length > 50 ? '...' : ''),
                 lastMessageTime: botTime,
                 lastMessageStatus: 'read',
+                lastMessageTimestamp: Date.now(),
               }
             : c
         )
@@ -338,7 +350,16 @@ function ChatAppContent() {
 
       setContacts((prev) =>
         prev.map((c) =>
-          c.id === currentChatId ? { ...c, status: 'online' } : c
+          c.id === currentChatId
+            ? {
+                ...c,
+                status: 'online',
+                lastMessage: 'Voice message',
+                lastMessageTime: botTime,
+                lastMessageStatus: 'read',
+                lastMessageTimestamp: Date.now(),
+              }
+            : c
         )
       );
 
@@ -508,7 +529,7 @@ function ChatAppContent() {
               />
 
               <ChatList
-                contacts={filteredContacts}
+                contacts={sortedContacts}
                 activeContactId={activeContactId}
                 onSelectContact={handleSelectContact}
                 messagesMap={messagesMap}
