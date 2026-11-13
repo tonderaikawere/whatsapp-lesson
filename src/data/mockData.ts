@@ -1,77 +1,61 @@
 import { Contact, Message } from '../types/chat';
 
 export const initialContacts: Contact[] = [
+  // ===============================
+  // PINNED CHATS (1 to 3)
+  // ===============================
   {
     id: 'ai-assistant',
-    name: 'WhatsApp AI Assistant',
+    name: 'AI Assistant',
     avatar: '🤖',
-    phone: '+263 (800) 555-0199',
-    about: 'Always here to chat, answer questions, and assist!',
+    phone: '+263 800 555 0199',
+    about: 'Smartest AI of all • Deep empathy, grammar, philosophy & any question',
     status: 'online',
     isPinned: true,
     isVerified: true,
     unreadCount: 0,
-    lastMessage: 'Hello! 👋 Welcome to WhatsApp Web AI Chatbot.',
-    lastMessageTime: '18:40',
+    lastMessage: 'Hello! 👋 I am your AI Assistant. How can I help you today?',
+    lastMessageTime: '10:30',
     lastMessageStatus: 'read',
   },
   {
-    id: 'tonderai-bot',
-    name: 'Tonderai Kawere (Developer)',
+    id: 'tonde',
+    name: 'Tonde',
     avatar: '👨‍💻',
-    phone: '+263 77 123 4567',
-    about: 'Full-Stack Developer | Bulawayo, Zimbabwe | Portfolio: tonde-portfolio.vercel.app',
+    phone: '+263 78 252 8050',
+    about: 'Full-Stack Developer • Bulawayo, Zimbabwe • Available for websites, apps & systems',
     status: 'online',
     isPinned: true,
     isVerified: true,
     unreadCount: 0,
-    lastMessage: 'Welcome! Check out my portfolio: https://tonde-portfolio.vercel.app/',
-    lastMessageTime: '18:35',
+    lastMessage: 'Am available for any work — websites, apps, and systems! Reach me on WhatsApp: +263782528050',
+    lastMessageTime: '10:25',
     lastMessageStatus: 'read',
   },
   {
-    id: 'tech-community',
-    name: 'Zimbabwe Tech & Devs 🇿🇼',
-    avatar: '⚛️',
-    phone: 'Group (1,420 members)',
-    about: 'Educational community discussing React, Next.js, and Mobile Apps across Bulawayo & Harare',
+    id: 'kawerify-tech',
+    name: 'Kawerify Tech',
+    avatar: '🏢',
+    phone: '+263 71 626 4988',
+    about: 'Software studio in Bulawayo • Websites, Apps & Systems • kawerifytech.com',
     status: 'online',
-    isGroup: true,
+    isPinned: true,
+    isVerified: true,
     unreadCount: 0,
-    lastMessage: '',
-    lastMessageTime: '',
+    lastMessage: 'Welcome to Kawerify Tech! Visit https://kawerifytech.com to see our latest digital solutions.',
+    lastMessageTime: '10:20',
+    lastMessageStatus: 'read',
   },
+
+  // ===============================
+  // NOT PINNED CHATS (1 to 6)
+  // ===============================
   {
-    id: 'thandeka-dube',
-    name: 'Thandeka Dube',
-    avatar: '👩🏾‍🎨',
-    phone: '+263 77 234 5678',
-    about: 'UI/UX Designer & Product Lead | Bulawayo, Zimbabwe',
-    status: 'online',
-    isPinned: false,
-    unreadCount: 0,
-    lastMessage: '',
-    lastMessageTime: '',
-  },
-  {
-    id: 'farai-moyo',
-    name: 'Farai Moyo (Tech Lead)',
-    avatar: '👨🏾‍💼',
-    phone: '+263 71 890 1234',
-    about: 'Senior Software Engineer | Harare, Zimbabwe',
-    status: 'online',
-    lastSeen: 'last seen today at 16:30',
-    isPinned: false,
-    unreadCount: 0,
-    lastMessage: '',
-    lastMessageTime: '',
-  },
-  {
-    id: 'ruvimbo-nyoni',
-    name: 'Ruvimbo Nyoni',
-    avatar: '👩🏾‍💻',
-    phone: '+263 78 456 7890',
-    about: 'Frontend Developer & React Enthusiast | Bulawayo',
+    id: 'simba',
+    name: 'Simba',
+    avatar: '🦁',
+    phone: '+263 77 111 2233',
+    about: 'Life guide & wisdom • Grounded answers to everything about life',
     status: 'online',
     isPinned: false,
     unreadCount: 0,
@@ -79,24 +63,59 @@ export const initialContacts: Contact[] = [
     lastMessageTime: '',
   },
   {
-    id: 'tendai-sibanda',
-    name: 'Tendai Sibanda',
-    avatar: '👨🏾‍🔧',
-    phone: '+263 77 987 6543',
-    about: 'Cloud & DevOps Engineer | Bulawayo, Zimbabwe',
-    status: 'offline',
-    lastSeen: 'last seen yesterday at 22:15',
+    id: 'startups',
+    name: 'Startups',
+    avatar: '💡',
+    phone: '+263 77 333 4455',
+    about: 'Startup specialist • Everything about launching, funding & scaling a business',
+    status: 'online',
     isPinned: false,
     unreadCount: 0,
     lastMessage: '',
     lastMessageTime: '',
   },
   {
-    id: 'takudzwa-mpofu',
-    name: 'Takudzwa Mpofu',
+    id: 'khumbulani-sibanda',
+    name: 'Khumbulani Sibanda',
+    avatar: '🧑🏾',
+    phone: '+263 77 555 6677',
+    about: 'Your go-to person to chat about anything, anytime',
+    status: 'online',
+    isPinned: false,
+    unreadCount: 0,
+    lastMessage: '',
+    lastMessageTime: '',
+  },
+  {
+    id: 'dev',
+    name: 'Dev',
     avatar: '👨🏾‍💻',
-    phone: '+263 73 567 8901',
-    about: 'Mobile Dev | React Native, Expo & Flutter | Gweru',
+    phone: '+263 77 777 8899',
+    about: 'Web mentor • Start building responsive HTML, CSS & JavaScript websites',
+    status: 'online',
+    isPinned: false,
+    unreadCount: 0,
+    lastMessage: '',
+    lastMessageTime: '',
+  },
+  {
+    id: 'prisca-khumalo',
+    name: 'Prisca Khumalo',
+    avatar: '🌸',
+    phone: '+263 77 888 9900',
+    about: 'The sweetest person • Creative ideas, jokes & positive vibes',
+    status: 'online',
+    isPinned: false,
+    unreadCount: 0,
+    lastMessage: '',
+    lastMessageTime: '',
+  },
+  {
+    id: 'school',
+    name: 'School',
+    avatar: '🎓',
+    phone: '+263 77 999 0011',
+    about: 'ZIMSEC specialist • Comprehensive research from ECD to Form 6',
     status: 'online',
     isPinned: false,
     unreadCount: 0,
@@ -108,22 +127,57 @@ export const initialContacts: Contact[] = [
 export const initialMessages: Record<string, Message[]> = {
   'ai-assistant': [
     {
-      id: 'm-1',
+      id: 'ai-welcome',
       senderId: 'ai-assistant',
-      senderName: 'WhatsApp AI Assistant',
-      text: 'Hello! 👋 Welcome to WhatsApp Web AI Chatbot.\n\nI can answer questions about Tonderai Kawere, full-stack software development, React, Next.js, mobile apps, or tell jokes and simulate voice notes!',
-      timestamp: '18:40',
+      senderName: 'AI Assistant',
+      text: 'Hello! 👋 I am your AI Assistant — here to chat, answer questions with deep insight, explore ideas, or just talk through whatever is on your mind. How are you feeling today?',
+      timestamp: '10:30',
       status: 'read',
       isOutgoing: false,
     },
   ],
-  'tonderai-bot': [
+  'tonde': [
     {
-      id: 'tb-1',
-      senderId: 'tonderai-bot',
-      senderName: 'Tonderai Kawere',
-      text: 'Welcome! 👋 I am Tonderai Kawere (or "Tonde" if casual). Welcome to my WhatsApp Web showcase!\n\nI like solving messy problems with clean code.\n\nExplore my live portfolio:\n🔗 https://tonde-portfolio.vercel.app/',
-      timestamp: '18:35',
+      id: 'tonde-welcome',
+      senderId: 'tonde',
+      senderName: 'Tonde',
+      text: `Hey! 👋 I am Tonde's AI assistant.
+
+I know everything about **Tonderai Kawere** — his 3+ years experience, full-stack tech stack (React, Next.js, Expo, React Native, Node.js, Python/Django, AWS), and projects (*Mweya Green Energy*, *Chicken Inn Byo*, *Eatwell*, *Nike Zimbabwe*).
+
+💼 *Am available for any work — websites, apps, and systems!*
+If you'd like to chat with me directly or discuss a project:
+• 📱 *WhatsApp:* +263782528050
+• 📧 *Email:* tondekawere@gmail.com
+• 💼 *LinkedIn:* https://www.linkedin.com/in/tonderaikawere/
+• 🌐 *Portfolio:* https://tonde-portfolio.vercel.app/
+
+How can I help you today?`,
+      timestamp: '10:25',
+      status: 'read',
+      isOutgoing: false,
+    },
+  ],
+  'kawerify-tech': [
+    {
+      id: 'kawerify-welcome',
+      senderId: 'kawerify-tech',
+      senderName: 'Kawerify Tech',
+      text: `Welcome to **Kawerify Tech**! 🏢🚀
+
+We are a software development studio based in **Bulawayo, Zimbabwe** (Gramps Way, Mbundane), co-founded by CTO Tonderai Kawere.
+
+We build:
+• 🌐 Custom Responsive Websites & Web Apps (Next.js & React)
+• 📱 Cross-Platform Mobile Apps (React Native, Expo & Flutter)
+• 🛒 E-Commerce & Payment Gateways
+• 🗄️ Custom Databases & Business Automation Systems
+
+Visit us at: https://kawerifytech.com
+Email: contact@kawerifytech.com | Phone: +263 71 626 4988
+
+How can we assist your business or startup today?`,
+      timestamp: '10:20',
       status: 'read',
       isOutgoing: false,
     },

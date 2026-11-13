@@ -225,9 +225,8 @@ function ChatAppContent() {
     // Play outgoing sound
     sounds.playSent();
 
-    // Trigger Bot or simulated response
+    // Trigger intelligent persona response
     const currentChatId = activeContactId;
-    const isBot = currentChatId === 'ai-assistant' || currentChatId === 'tonderai-bot';
 
     // Show typing briefly (never stuck)
     setIsTyping(true);
@@ -236,7 +235,7 @@ function ChatAppContent() {
     );
 
     const reply = generateBotResponse(currentChatId, text || attachment?.name || '');
-    const delay = isBot ? reply.delayMs || 900 : 1100;
+    const delay = reply.delayMs || 800;
 
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
@@ -321,11 +320,12 @@ function ChatAppContent() {
     typingTimeoutRef.current = setTimeout(() => {
       setIsTyping(false);
       const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const personaReply = generateBotResponse(currentChatId, 'voice note received');
       const botMsg: Message = {
         id: `bot-vn-${Date.now()}`,
         senderId: currentChatId,
         senderName: activeContact.name,
-        text: `Voice note received loud and clear! 🎧\n\nTonderai Kawere specializes in clean code across React, Expo, Next.js, and Node.js. Feel free to explore his portfolio at https://tonde-portfolio.vercel.app/!`,
+        text: `Voice note received loud and clear! 🎧\n\n${personaReply.text}`,
         timestamp: botTime,
         status: 'read',
         isOutgoing: false,

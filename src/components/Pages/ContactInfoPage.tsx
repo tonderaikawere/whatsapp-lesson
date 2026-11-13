@@ -84,7 +84,7 @@ export default function ContactInfoPage({ contact, onBack }: ContactInfoPageProp
         </Box>
 
         {/* Developer link if developer bot */}
-        {contact.id === 'tonderai-bot' && (
+        {(contact.id === 'tonde' || contact.id === 'tonderai-bot') && (
           <Box
             sx={{
               bgcolor: mode === 'light' ? '#ffffff' : '#202c33',
