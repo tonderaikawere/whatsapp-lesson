@@ -24,7 +24,7 @@ import { Contact, Message, FilterType, Attachment } from '../types/chat';
 import { storage } from '../utils/storage';
 import { sounds } from '../utils/sound';
 import { notifications } from '../utils/notifications';
-import { generateBotResponse } from '../utils/botResponses';
+import { fetchSmartBotResponse } from '../utils/botResponses';
 
 type MainView = 'chat' | 'contact-info' | 'story' | 'call';
 
@@ -245,56 +245,55 @@ function ChatAppContent() {
       prev.map((c) => (c.id === currentChatId ? { ...c, status: 'typing...' } : c))
     );
 
-    const reply = generateBotResponse(currentChatId, text || attachment?.name || '');
-    const delay = reply.delayMs || 800;
+    fetchSmartBotResponse(currentChatId, text || attachment?.name || '').then((reply) => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
 
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false);
 
-    typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false);
-
-      const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const botMsg: Message = {
-        id: `reply-${Date.now()}`,
-        senderId: currentChatId,
-        senderName: activeContact.name,
-        text: reply.text,
-        timestamp: botTime,
-        status: 'read',
-        isOutgoing: false,
-      };
-
-      setMessagesMap((prev) => {
-        const updated = (prev[currentChatId] || []).map((m) =>
-          m.isOutgoing ? { ...m, status: 'read' as const } : m
-        );
-        return {
-          ...prev,
-          [currentChatId]: [...updated, botMsg],
+        const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const botMsg: Message = {
+          id: `reply-${Date.now()}`,
+          senderId: currentChatId,
+          senderName: activeContact.name,
+          text: reply.text,
+          timestamp: botTime,
+          status: 'read',
+          isOutgoing: false,
         };
-      });
 
-      // Ensure contact returns to 'online' status immediately!
-      setContacts((prev) =>
-        prev.map((c) =>
-          c.id === currentChatId
-            ? {
-                ...c,
-                status: 'online',
-                lastMessage: reply.text.slice(0, 50) + (reply.text.length > 50 ? '...' : ''),
-                lastMessageTime: botTime,
-                lastMessageStatus: 'read',
-                lastMessageTimestamp: Date.now(),
-              }
-            : c
-        )
-      );
+        setMessagesMap((prev) => {
+          const updated = (prev[currentChatId] || []).map((m) =>
+            m.isOutgoing ? { ...m, status: 'read' as const } : m
+          );
+          return {
+            ...prev,
+            [currentChatId]: [...updated, botMsg],
+          };
+        });
 
-      sounds.playReceived();
-      notifications.notify(activeContact.name, reply.text);
-    }, delay);
+        // Ensure contact returns to 'online' status immediately and update timestamp
+        setContacts((prev) =>
+          prev.map((c) =>
+            c.id === currentChatId
+              ? {
+                  ...c,
+                  status: 'online',
+                  lastMessage: reply.text.slice(0, 50) + (reply.text.length > 50 ? '...' : ''),
+                  lastMessageTime: botTime,
+                  lastMessageStatus: 'read',
+                  lastMessageTimestamp: Date.now(),
+                }
+              : c
+          )
+        );
+
+        sounds.playReceived();
+        notifications.notify(activeContact.name, reply.text);
+      }, reply.delayMs || 600);
+    });
   };
 
   const handleSendVoiceNote = () => {
@@ -325,47 +324,48 @@ function ChatAppContent() {
       prev.map((c) => (c.id === currentChatId ? { ...c, status: 'typing...' } : c))
     );
 
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
+    fetchSmartBotResponse(currentChatId, 'voice note received').then((personaReply) => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
 
-    typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false);
-      const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const personaReply = generateBotResponse(currentChatId, 'voice note received');
-      const botMsg: Message = {
-        id: `bot-vn-${Date.now()}`,
-        senderId: currentChatId,
-        senderName: activeContact.name,
-        text: `Voice note received loud and clear! 🎧\n\n${personaReply.text}`,
-        timestamp: botTime,
-        status: 'read',
-        isOutgoing: false,
-      };
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false);
+        const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const botMsg: Message = {
+          id: `bot-vn-${Date.now()}`,
+          senderId: currentChatId,
+          senderName: activeContact.name,
+          text: `Voice note received loud and clear! 🎧\n\n${personaReply.text}`,
+          timestamp: botTime,
+          status: 'read',
+          isOutgoing: false,
+        };
 
-      setMessagesMap((prev) => ({
-        ...prev,
-        [currentChatId]: [...(prev[currentChatId] || []), botMsg],
-      }));
+        setMessagesMap((prev) => ({
+          ...prev,
+          [currentChatId]: [...(prev[currentChatId] || []), botMsg],
+        }));
 
-      setContacts((prev) =>
-        prev.map((c) =>
-          c.id === currentChatId
-            ? {
-                ...c,
-                status: 'online',
-                lastMessage: 'Voice message',
-                lastMessageTime: botTime,
-                lastMessageStatus: 'read',
-                lastMessageTimestamp: Date.now(),
-              }
-            : c
-        )
-      );
+        setContacts((prev) =>
+          prev.map((c) =>
+            c.id === currentChatId
+              ? {
+                  ...c,
+                  status: 'online',
+                  lastMessage: 'Voice message',
+                  lastMessageTime: botTime,
+                  lastMessageStatus: 'read',
+                  lastMessageTimestamp: Date.now(),
+                }
+              : c
+          )
+        );
 
-      sounds.playReceived();
-      notifications.notify(activeContact.name, botMsg.text);
-    }, 900);
+        sounds.playReceived();
+        notifications.notify(activeContact.name, botMsg.text);
+      }, personaReply.delayMs || 600);
+    });
   };
 
   const handleCreatePoll = (question: string, options: string[]) => {
