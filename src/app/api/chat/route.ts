@@ -73,23 +73,30 @@ export async function POST(req: NextRequest) {
       } catch {}
     }
 
-    // 3. Conversational quick replies
-    if (/^(hi|hello|hey|yo|greetings|hie)$/i.test(lower)) {
-      return NextResponse.json({
-        text: cleanOutput('Hello! How can I help you today?'),
-      });
+    // 3. Conversational quick replies (ONLY for general 'ai-assistant' - other personas have custom personalities)
+    if (contactId === 'ai-assistant') {
+      if (/^(hi|hello|hey|yo|greetings|hie)$/i.test(lower)) {
+        return NextResponse.json({
+          text: cleanOutput('Hello! How can I help you today?'),
+        });
+      }
+
+      if (/^(how\s*are\s*you|how\s*r\s*u)$/i.test(lower)) {
+        return NextResponse.json({
+          text: cleanOutput("Thanks for asking! I'm doing well and ready to help. What can I assist you with today?"),
+        });
+      }
+
+      if (/^(i have a question|i have a qustion|can i ask|can i ask you|may i ask)$/i.test(lower)) {
+        return NextResponse.json({
+          text: cleanOutput("Sure, go ahead! What's your question?"),
+        });
+      }
     }
 
-    if (/^(how\s*are\s*you|how\s*r\s*u)$/i.test(lower)) {
-      return NextResponse.json({
-        text: cleanOutput("Thanks for asking! I'm doing well and ready to help. What can I assist you with today?"),
-      });
-    }
-
-    if (/^(i have a question|i have a qustion|can i ask|can i ask you|may i ask)$/i.test(lower)) {
-      return NextResponse.json({
-        text: cleanOutput("Sure, go ahead! What's your question?"),
-      });
+    // If contact is Kawerify Tech, let the persona handle it directly with authentic agency data
+    if (contactId === 'kawerify-tech') {
+      return NextResponse.json({ text: null });
     }
 
     // 4. Web Knowledge Search for ANY question like "what is X", "who is X", "tell me about X"

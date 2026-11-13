@@ -220,38 +220,184 @@ Check them out at https://tonde-portfolio.vercel.app/`;
 }
 
 // ==========================================
-// 3. KAWERIFY TECH (Studio Info & Agency Solutions)
+// 3. KAWERIFY TECH (Official Agency Admin & kawerifytech.com)
 // ==========================================
 function handleKawerifyTech(text: string): string {
   const norm = normalizeQuery(text);
 
-  if (/^(hi|hello|hey|hie)/i.test(norm)) {
-    return "Hello! Welcome to Kawerify Tech. How can we assist your business today?";
+  if (/^(hi|hello|hey|hie|greetings)/i.test(norm)) {
+    return "Hello! 👋 Welcome to **Kawerify Tech** (kawerifytech.com). I am the Kawerify Tech Admin. Are you looking to build a website, cross-platform mobile app, e-commerce store, or custom system? Let me know what you need!";
   }
 
   if (/^(how are you|how r u)/i.test(norm)) {
-    return "We're doing great, helping companies build scalable software! How can we help you today?";
+    return "I'm doing great! Busy shipping high-performance web and mobile software for our clients across Zimbabwe, South Africa, the US, and Europe. How can I help you today?";
   }
 
-  if (/service|what do you do|offer|build/i.test(norm)) {
-    return `Kawerify Tech provides:
-• Custom Website & Web App Development (React, Next.js)
-• Mobile App Development (iOS & Android with Expo/React Native)
-• E-Commerce & Payment Gateways (EcoCash, Paynow, Stripe)
-• Custom Business Databases & Automation
-
-Website: https://kawerifytech.com
-Email: contact@kawerifytech.com | Phone: +263 71 626 4988`;
+  if (/^(can i ask|i have a question)/i.test(norm)) {
+    return "Yes, absolutely! As Kawerify Tech Admin, I can help you with pricing, project timelines, technology stacks, or booking a consultation with our engineering team. What would you like to know?";
   }
 
-  if (/location|address|where|office|contact/i.test(norm)) {
-    return `Our studio is located at Gramps Way, Mbundane, Bulawayo, Zimbabwe.
-Website: https://kawerifytech.com
-Email: contact@kawerifytech.com
-Phone: +263 71 626 4988`;
+  // Need a website / want a website
+  if (/(need a website|want a website|build me a website|make a website|create a website|develop a website|new website|looking for a website)/i.test(norm)) {
+    return `Awesome! You came to the right place. We would love to build your website! 🚀
+
+At **Kawerify Tech** (kawerifytech.com), we build high-performance business websites, e-commerce stores, and custom web portals tailored to your brand.
+
+To give you the exact roadmap and quote:
+1. What type of website do you need (e.g. corporate showcase, online store/e-commerce, booking portal, or custom dashboard)?
+2. Do you have existing branding or content, or are we designing everything from scratch?
+
+Our business websites start from **$300** with a fast delivery turnaround of **1 to 3 weeks**.
+
+You can also reach our engineering desk directly right now on WhatsApp / Call at **+263 71 626 4988** or email **contact@kawerifytech.com**!`;
   }
 
-  return "Welcome to Kawerify Tech! We engineer custom websites, mobile apps, and business software. Visit us at https://kawerifytech.com or call +263 71 626 4988.";
+  // Pricing / Cost / How much
+  if (/(how much|price|pricing|cost|rate|charge|package|quote|fee)/i.test(norm)) {
+    return `Here is **Kawerify Tech's** transparent pricing structure:
+
+• **Business Websites & Landing Pages:** Starting from **$300** (1 to 3 weeks turnaround). Includes modern responsive UI, SEO optimization, contact forms, and mobile speed tuning.
+• **E-Commerce & Online Stores:** Starting from **$500 to $800** depending on catalog size, inventory system, and payment integration (EcoCash, Paynow, Stripe, Visa/Mastercard).
+• **Cross-Platform Mobile Apps (iOS & Android):** Starting from **$800** built with React Native and Flutter.
+• **Custom Web Portals & Enterprise Systems:** Custom quotes based on scope (typically 4 to 12 weeks).
+
+*Billing Model:* We work on clear milestone payments: an initial deposit to start, followed by staged payments on key delivery milestones.
+
+Tell us more about your project and we will prepare an exact proposal for you! You can call or WhatsApp us at **+263 71 626 4988**.`;
+  }
+
+  // Timelines / Delivery time
+  if (/(how long|timeline|delivery|turnaround|time frame|when will)/i.test(norm)) {
+    return `Our typical delivery timelines at Kawerify Tech:
+
+• **Landing Page / Small Business Site:** Typically **1 to 3 weeks**.
+• **E-Commerce Stores & Advanced Portals:** Typically **4 to 6 weeks**.
+• **Custom Mobile Apps & Enterprise Systems:** **6 to 12 weeks** depending on complexity.
+
+We provide a clear milestone roadmap before kickoff so you always know what to expect!`;
+  }
+
+  // Location / Office / Address
+  if (/(location|address|where are you|office|where is your office|based)/i.test(norm)) {
+    return `📍 **Kawerify Tech Location:**
+
+• **Office Address:** Kawerify Tech Office, Gramps Way, Mbundane, Bulawayo, Zimbabwe 🇿🇼
+• **Global Reach:** We serve clients locally across Bulawayo and Harare, as well as internationally in South Africa, Zambia, the US, and Europe!
+• **Website:** https://kawerifytech.com
+• **Phone / WhatsApp:** +263 71 626 4988
+• **Email:** contact@kawerifytech.com`;
+  }
+
+  // Team / Management / Who owns / CTO
+  if (/(team|who is the cto|who is the ceo|who runs|management|founders|tonderai|shaldeen)/i.test(norm)) {
+    return `👥 **Kawerify Tech Leadership Team:**
+
+• **Tonderai Kawere:** Chief Technology Officer (CTO)
+• **Shaldeen Dube:** Chief Executive Officer (CEO)
+• **Buhle Moyo:** Director of Operations
+• **Thembekile Dube:** Chief Marketing Officer (CMO)
+• **Thabisile Moyo:** Chief Operating Officer (COO)
+• **Janice Sibanda:** Head of Product
+
+Led by CTO Tonderai Kawere, our engineering team builds cutting-edge software using React, Next.js, Flutter, React Native, and cloud infrastructure.`;
+  }
+
+  // Mobile App development
+  if (/(mobile app|android|ios|flutter|react native|build an app)/i.test(norm)) {
+    return `📱 **Mobile App Development at Kawerify Tech:**
+
+Yes! We specialize in cross-platform mobile apps for both **iOS and Android** using **React Native and Flutter**, ensuring your app looks and performs natively on all devices from a single codebase.
+
+• Starting from **$800**
+• Real-time push notifications, offline storage, camera/GPS integration, and secure user authentication.
+• Full app store deployment to Google Play Store and Apple App Store.
+
+What kind of mobile app are you planning to build?`;
+  }
+
+  // Services / What do you do
+  if (/(service|what do you do|what we do|offer|capabilities)/i.test(norm)) {
+    return `🏢 **Kawerify Tech Services (kawerifytech.com):**
+
+1. **Custom Web Development:** Fast, responsive corporate websites, web applications, and customer portals built on React & Next.js (from $300).
+2. **Mobile App Development:** Cross-platform iOS & Android mobile apps with React Native & Flutter (from $800).
+3. **E-Commerce & Online Stores:** Full online shops with EcoCash, Paynow, Stripe, and credit card payments.
+4. **UI/UX Design:** User journeys, wireframes, and design tokens created in Figma.
+5. **Custom Database & Enterprise Systems:** Automated inventory, CRM, and management dashboards.
+6. **Workshops & Mentorship:** Cohort-based technical training led by our CTO and engineering team.
+
+Visit our website at https://kawerifytech.com or contact us at **+263 71 626 4988**!`;
+  }
+
+  // Contact / Phone / Email
+  if (/(contact|phone|email|whatsapp|call|reach|number)/i.test(norm)) {
+    return `📞 **Reach Kawerify Tech Admin Directly:**
+
+• 📱 **Phone / WhatsApp:** +263 71 626 4988
+• 📧 **Email:** contact@kawerifytech.com (or kawerifytech@gmail.com)
+• 🌐 **Website:** https://kawerifytech.com
+• 📍 **Office:** Gramps Way, Mbundane, Bulawayo, Zimbabwe
+
+We are ready to schedule a discovery call or discuss your project scope today!`;
+  }
+
+  // Custom Systems, Portals & Databases
+  if (/(system|portal|database|crm|erp|school system|hospital|inventory|management system)/i.test(norm)) {
+    return `⚙️ **Custom Systems & Enterprise Software at Kawerify Tech:**
+
+Yes! We architect robust, secure custom software systems tailored for businesses, schools, clinics, and organizations:
+
+• **School & College Management Systems:** Student registration, fees tracking, grading, and parent portals.
+• **Inventory & POS Systems:** Real-time stock alerts, sales analytics, multi-branch tracking.
+• **Custom CRM & Enterprise Portals:** Role-based access control, workflow automation, and automated reporting.
+• **Database Architecture:** High-availability PostgreSQL, MongoDB, or Firebase backends.
+
+Tell us your workflow requirements and our CTO Tonderai Kawere and the development team will design an architecture blueprint for you! Contact us at **+263 71 626 4988**.`;
+  }
+
+  // Payment methods
+  if (/(payment|how do i pay|deposit|ecocash|paynow|innbucks|stripe|terms)/i.test(norm)) {
+    return `💳 **Payment Methods & Billing Terms at Kawerify Tech:**
+
+• **Accepted Methods:** EcoCash, InnBucks, Local USD Cash, Bank Transfer (Nostro / RTGS), Paynow, and International Card / Stripe.
+• **Milestone Structure:** We use a transparent milestone model: an initial commitment deposit upon signing the proposal, followed by staged payments upon reaching agreed development milestones.
+• **Security:** All contracts include source code handover, deployment guarantees, and complimentary post-launch support!`;
+  }
+
+  // Testimonials / Past work / Portfolio
+  if (/(portfolio|past work|clients|testimonials|nacc|nketa|rac|previous projects|examples)/i.test(norm)) {
+    return `🌟 **Kawerify Tech Portfolio & Notable Clients:**
+
+• **NACC Zimbabwe:** Web ecosystem and corporate portal.
+• **Nketa Baptist:** Digitized hymnal management system and global mobile app.
+• **RAC Zimbabwe:** Digital ministry, media, and outreach platform.
+• Commercial restaurant ordering systems, sustainable energy platforms, and business dashboards.
+
+Explore more case studies on our site: https://kawerifytech.com!`;
+  }
+
+  // Tech Stack
+  if (/(tech stack|stack|technologies|tools|languages|frameworks|what do you use)/i.test(norm)) {
+    return `💻 **Kawerify Tech Core Engineering Stack:**
+
+• **Web & Frontend:** Next.js (App Router), React.js, TypeScript, Tailwind CSS, Material UI.
+• **Mobile Apps:** React Native, Expo, Flutter (iOS & Android).
+• **Backend & APIs:** Node.js, Express, Python (Django/FastAPI), REST & GraphQL APIs.
+• **Databases & Cloud:** PostgreSQL, MongoDB, Firebase, AWS, Docker, Vercel.
+
+We write clean, production-grade, scalable code. Visit https://kawerifytech.com or reach our CTO directly at +263 71 626 4988!`;
+  }
+
+  return `Welcome to **Kawerify Tech**! 🏢🚀
+
+I am the Kawerify Tech Admin. We engineer high-performance custom websites (from $300), cross-platform mobile apps (from $800), and business systems.
+
+• 🌐 Website: https://kawerifytech.com
+• 📱 Phone / WhatsApp: +263 71 626 4988
+• 📧 Email: contact@kawerifytech.com
+• 📍 Office: Gramps Way, Mbundane, Bulawayo, Zimbabwe
+
+How can we assist your business or project today?`;
 }
 
 // ==========================================
