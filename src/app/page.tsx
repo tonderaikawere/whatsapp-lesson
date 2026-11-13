@@ -238,6 +238,7 @@ function ChatAppContent() {
 
     // Trigger intelligent persona response
     const currentChatId = activeContactId;
+    const history = messagesMap[currentChatId] || [];
 
     // Show typing briefly (never stuck)
     setIsTyping(true);
@@ -245,7 +246,7 @@ function ChatAppContent() {
       prev.map((c) => (c.id === currentChatId ? { ...c, status: 'typing...' } : c))
     );
 
-    fetchSmartBotResponse(currentChatId, text || attachment?.name || '').then((reply) => {
+    fetchSmartBotResponse(currentChatId, text || attachment?.name || '', history).then((reply) => {
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
@@ -319,12 +320,13 @@ function ChatAppContent() {
     sounds.playSent();
 
     const currentChatId = activeContactId;
+    const history = messagesMap[currentChatId] || [];
     setIsTyping(true);
     setContacts((prev) =>
       prev.map((c) => (c.id === currentChatId ? { ...c, status: 'typing...' } : c))
     );
 
-    fetchSmartBotResponse(currentChatId, 'voice note received').then((personaReply) => {
+    fetchSmartBotResponse(currentChatId, 'voice note received', history).then((personaReply) => {
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }

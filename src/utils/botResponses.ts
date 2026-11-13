@@ -512,7 +512,7 @@ Graded in Units from 1 (Distinction) to 9.`;
 // ==========================================
 // ASYNC SMART DISPATCHER (Calls /api/chat + fallback)
 // ==========================================
-export async function fetchSmartBotResponse(contactId: string, userText: string): Promise<BotReply> {
+export async function fetchSmartBotResponse(contactId: string, userText: string, history: any[] = []): Promise<BotReply> {
   const delay = Math.floor(Math.random() * 200) + 500; // 500ms - 700ms natural delay
 
   // Try calling the Next.js API route first for live date, math, and web search
@@ -521,7 +521,7 @@ export async function fetchSmartBotResponse(contactId: string, userText: string)
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contactId, message: userText }),
+        body: JSON.stringify({ contactId, message: userText, history }),
       });
       if (res.ok) {
         const data = await res.json();
